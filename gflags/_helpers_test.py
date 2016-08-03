@@ -36,56 +36,59 @@ from gflags import _helpers
 
 class FlagSuggestionTest(unittest.TestCase):
 
-  def setUp(self):
-    self.longopts = [
-        'fsplit-ivs-in-unroller=',
-        'fsplit-wide-types=',
-        'fstack-protector=',
-        'fstack-protector-all=',
-        'fstrict-aliasing=',
-        'fstrict-overflow=',
-        'fthread-jumps=',
-        'ftracer',
-        'ftree-bit-ccp',
-        'ftree-builtin-call-dce',
-        'ftree-ccp',
-        'ftree-ch']
+    def setUp(self):
+        self.longopts = [
+            'fsplit-ivs-in-unroller=',
+            'fsplit-wide-types=',
+            'fstack-protector=',
+            'fstack-protector-all=',
+            'fstrict-aliasing=',
+            'fstrict-overflow=',
+            'fthread-jumps=',
+            'ftracer',
+            'ftree-bit-ccp',
+            'ftree-builtin-call-dce',
+            'ftree-ccp',
+            'ftree-ch']
 
-  def testDamerauLevenshteinId(self):
-    self.assertEqual(0, _helpers._DamerauLevenshtein('asdf', 'asdf'))
+    def testDamerauLevenshteinId(self):
+        self.assertEqual(0, _helpers._DamerauLevenshtein('asdf', 'asdf'))
 
-  def testDamerauLevenshteinEmpty(self):
-    self.assertEqual(5, _helpers._DamerauLevenshtein('', 'kites'))
-    self.assertEqual(6, _helpers._DamerauLevenshtein('kitten', ''))
+    def testDamerauLevenshteinEmpty(self):
+        self.assertEqual(5, _helpers._DamerauLevenshtein('', 'kites'))
+        self.assertEqual(6, _helpers._DamerauLevenshtein('kitten', ''))
 
-  def testDamerauLevenshteinCommutative(self):
-    self.assertEqual(2, _helpers._DamerauLevenshtein('kitten', 'kites'))
-    self.assertEqual(2, _helpers._DamerauLevenshtein('kites', 'kitten'))
+    def testDamerauLevenshteinCommutative(self):
+        self.assertEqual(2, _helpers._DamerauLevenshtein('kitten', 'kites'))
+        self.assertEqual(2, _helpers._DamerauLevenshtein('kites', 'kitten'))
 
-  def testDamerauLevenshteinTransposition(self):
-    self.assertEqual(1, _helpers._DamerauLevenshtein('kitten', 'ktiten'))
+    def testDamerauLevenshteinTransposition(self):
+        self.assertEqual(1, _helpers._DamerauLevenshtein('kitten', 'ktiten'))
 
-  def testMispelledSuggestions(self):
-    suggestions = _helpers.GetFlagSuggestions('fstack_protector_all',
-                                              self.longopts)
-    self.assertEqual(['fstack-protector-all'], suggestions)
+    def testMispelledSuggestions(self):
+        suggestions = _helpers.GetFlagSuggestions('fstack_protector_all',
+                                                  self.longopts)
+        self.assertEqual(['fstack-protector-all'], suggestions)
 
-  def testAmbiguousPrefixSuggestion(self):
-    suggestions = _helpers.GetFlagSuggestions('fstack', self.longopts)
-    self.assertEqual(['fstack-protector', 'fstack-protector-all'], suggestions)
+    def testAmbiguousPrefixSuggestion(self):
+        suggestions = _helpers.GetFlagSuggestions('fstack', self.longopts)
+        self.assertEqual(
+            ['fstack-protector', 'fstack-protector-all'], suggestions)
 
-  def testMisspelledAmbiguousPrefixSuggestion(self):
-    suggestions = _helpers.GetFlagSuggestions('stack', self.longopts)
-    self.assertEqual(['fstack-protector', 'fstack-protector-all'], suggestions)
+    def testMisspelledAmbiguousPrefixSuggestion(self):
+        suggestions = _helpers.GetFlagSuggestions('stack', self.longopts)
+        self.assertEqual(
+            ['fstack-protector', 'fstack-protector-all'], suggestions)
 
-  def testCrazySuggestion(self):
-    suggestions = _helpers.GetFlagSuggestions('asdfasdgasdfa', self.longopts)
-    self.assertEqual([], suggestions)
+    def testCrazySuggestion(self):
+        suggestions = _helpers.GetFlagSuggestions(
+            'asdfasdgasdfa', self.longopts)
+        self.assertEqual([], suggestions)
 
 
 def main():
-  unittest.main()
+    unittest.main()
 
 
 if __name__ == '__main__':
-  main()
+    main()

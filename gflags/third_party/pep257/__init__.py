@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+
 def trim(docstring):
     """Removes indentation from triple-quoted strings.
 

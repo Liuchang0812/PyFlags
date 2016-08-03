@@ -40,70 +40,70 @@ _helpers.disclaim_module_ids.add(id(sys.modules[__name__]))
 
 
 class FlagsError(Exception):
-  """The base class for all flags errors."""
+    """The base class for all flags errors."""
 
 
 class DuplicateFlag(FlagsError):
-  """Raised if there is a flag naming conflict."""
+    """Raised if there is a flag naming conflict."""
 
 
 class CantOpenFlagFileError(FlagsError):
-  """Raised if flagfile fails to open: doesn't exist, wrong permissions, etc."""
+    """Raised if flagfile fails to open: doesn't exist, wrong permissions, etc."""
 
 
 class DuplicateFlagCannotPropagateNoneToSwig(DuplicateFlag):
-  """Special case of DuplicateFlag -- SWIG flag value can't be set to None.
+    """Special case of DuplicateFlag -- SWIG flag value can't be set to None.
 
-  This can be raised when a duplicate flag is created. Even if allow_override is
-  True, we still abort if the new value is None, because it's currently
-  impossible to pass None default value back to SWIG. See FlagValues.SetDefault
-  for details.
-  """
+    This can be raised when a duplicate flag is created. Even if allow_override is
+    True, we still abort if the new value is None, because it's currently
+    impossible to pass None default value back to SWIG. See FlagValues.SetDefault
+    for details.
+    """
 
 
 class DuplicateFlagError(DuplicateFlag):
-  """A DuplicateFlag whose message cites the conflicting definitions.
+    """A DuplicateFlag whose message cites the conflicting definitions.
 
-  A DuplicateFlagError conveys more information than a DuplicateFlag,
-  namely the modules where the conflicting definitions occur. This
-  class was created to avoid breaking external modules which depend on
-  the existing DuplicateFlags interface.
-  """
-
-  def __init__(self, flagname, flag_values, other_flag_values=None):
-    """Create a DuplicateFlagError.
-
-    Args:
-      flagname: Name of the flag being redefined.
-      flag_values: FlagValues object containing the first definition of
-          flagname.
-      other_flag_values: If this argument is not None, it should be the
-          FlagValues object where the second definition of flagname occurs.
-          If it is None, we assume that we're being called when attempting
-          to create the flag a second time, and we use the module calling
-          this one as the source of the second definition.
+    A DuplicateFlagError conveys more information than a DuplicateFlag,
+    namely the modules where the conflicting definitions occur. This
+    class was created to avoid breaking external modules which depend on
+    the existing DuplicateFlags interface.
     """
-    self.flagname = flagname
-    first_module = flag_values.FindModuleDefiningFlag(
-        flagname, default='<unknown>')
-    if other_flag_values is None:
-      second_module = _helpers.GetCallingModule()
-    else:
-      second_module = other_flag_values.FindModuleDefiningFlag(
-          flagname, default='<unknown>')
-    flag_summary = flag_values[self.flagname].help
-    msg = ("The flag '%s' is defined twice. First from %s, Second from %s.  "
-           "Description from first occurrence: %s") % (
-               self.flagname, first_module, second_module, flag_summary)
-    DuplicateFlag.__init__(self, msg)
+
+    def __init__(self, flagname, flag_values, other_flag_values=None):
+        """Create a DuplicateFlagError.
+
+        Args:
+          flagname: Name of the flag being redefined.
+          flag_values: FlagValues object containing the first definition of
+              flagname.
+          other_flag_values: If this argument is not None, it should be the
+              FlagValues object where the second definition of flagname occurs.
+              If it is None, we assume that we're being called when attempting
+              to create the flag a second time, and we use the module calling
+              this one as the source of the second definition.
+        """
+        self.flagname = flagname
+        first_module = flag_values.FindModuleDefiningFlag(
+            flagname, default='<unknown>')
+        if other_flag_values is None:
+            second_module = _helpers.GetCallingModule()
+        else:
+            second_module = other_flag_values.FindModuleDefiningFlag(
+                flagname, default='<unknown>')
+        flag_summary = flag_values[self.flagname].help
+        msg = ("The flag '%s' is defined twice. First from %s, Second from %s.  "
+               "Description from first occurrence: %s") % (
+                   self.flagname, first_module, second_module, flag_summary)
+        DuplicateFlag.__init__(self, msg)
 
 
 class IllegalFlagValue(FlagsError):
-  """The flag command line argument is illegal."""
+    """The flag command line argument is illegal."""
 
 
 class UnrecognizedFlag(FlagsError):
-  """Raised if a flag is unrecognized."""
+    """Raised if a flag is unrecognized."""
 
 
 # An UnrecognizedFlagError conveys more information than an UnrecognizedFlag.
@@ -115,16 +115,16 @@ class UnrecognizedFlag(FlagsError):
 # reference to a flag that was not already defined.
 class UnrecognizedFlagError(UnrecognizedFlag):
 
-  def __init__(self, flagname, flagvalue='', suggestions=None):
-    self.flagname = flagname
-    self.flagvalue = flagvalue
-    if suggestions:
-      tip = '. Did you mean: %s?' % ', '.join(suggestions)
-    else:
-      tip = ''
-    UnrecognizedFlag.__init__(
-        self, 'Unknown command line flag \'%s\'%s' % (flagname, tip))
+    def __init__(self, flagname, flagvalue='', suggestions=None):
+        self.flagname = flagname
+        self.flagvalue = flagvalue
+        if suggestions:
+            tip = '. Did you mean: %s?' % ', '.join(suggestions)
+        else:
+            tip = ''
+        UnrecognizedFlag.__init__(
+            self, 'Unknown command line flag \'%s\'%s' % (flagname, tip))
 
 
 class UnparsedFlagAccessError(FlagsError):
-  """Attempt to use flag from unparsed FlagValues."""
+    """Attempt to use flag from unparsed FlagValues."""

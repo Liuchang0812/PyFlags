@@ -34,8 +34,6 @@ before main() executes.
 """
 
 
-
-
 import gflags
 
 FLAGS = gflags.FLAGS

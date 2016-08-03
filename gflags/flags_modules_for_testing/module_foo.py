@@ -34,10 +34,11 @@ other flags as being important.  We want to make sure the unit tests
 for gflags.py involve more than one module.
 """
 
-__author__ = 'salcianu@google.com (Alex Salcianu)'
 
 import gflags
 from gflags.flags_modules_for_testing import module_bar
+
+__author__ = 'salcianu@google.com (Alex Salcianu)'
 
 FLAGS = gflags.FLAGS
 
@@ -48,95 +49,95 @@ DECLARED_KEY_FLAGS = ['tmod_bar_x', 'tmod_bar_z', 'tmod_bar_t',
 
 
 def DefineFlags(flag_values=FLAGS):
-  """Defines a few flags."""
-  module_bar.DefineFlags(flag_values=flag_values)
-  # The 'tmod_foo_' prefix (short for 'test_module_foo') ensures that we
-  # have no name clash with existing flags.
-  gflags.DEFINE_boolean('tmod_foo_bool', True, 'Boolean flag from module foo.',
-                       flag_values=flag_values)
-  gflags.DEFINE_string('tmod_foo_str', 'default', 'String flag.',
-                      flag_values=flag_values)
-  gflags.DEFINE_integer('tmod_foo_int', 3, 'Sample int flag.',
-                       flag_values=flag_values)
+    """Defines a few flags."""
+    module_bar.DefineFlags(flag_values=flag_values)
+    # The 'tmod_foo_' prefix (short for 'test_module_foo') ensures that we
+    # have no name clash with existing flags.
+    gflags.DEFINE_boolean('tmod_foo_bool', True, 'Boolean flag from module foo.',
+                          flag_values=flag_values)
+    gflags.DEFINE_string('tmod_foo_str', 'default', 'String flag.',
+                         flag_values=flag_values)
+    gflags.DEFINE_integer('tmod_foo_int', 3, 'Sample int flag.',
+                          flag_values=flag_values)
 
 
 def DeclareKeyFlags(flag_values=FLAGS):
-  """Declares a few key flags."""
-  for flag_name in DECLARED_KEY_FLAGS:
-    gflags.DECLARE_key_flag(flag_name, flag_values=flag_values)
+    """Declares a few key flags."""
+    for flag_name in DECLARED_KEY_FLAGS:
+        gflags.DECLARE_key_flag(flag_name, flag_values=flag_values)
 
 
 def DeclareExtraKeyFlags(flag_values=FLAGS):
-  """Declares some extra key flags."""
-  gflags.ADOPT_module_key_flags(module_bar, flag_values=flag_values)
+    """Declares some extra key flags."""
+    gflags.ADOPT_module_key_flags(module_bar, flag_values=flag_values)
 
 
 def NamesOfDefinedFlags():
-  """Returns: list of names of flags defined by this module."""
-  return ['tmod_foo_bool', 'tmod_foo_str', 'tmod_foo_int']
+    """Returns: list of names of flags defined by this module."""
+    return ['tmod_foo_bool', 'tmod_foo_str', 'tmod_foo_int']
 
 
 def NamesOfDeclaredKeyFlags():
-  """Returns: list of names of key flags for this module."""
-  return NamesOfDefinedFlags() + DECLARED_KEY_FLAGS
+    """Returns: list of names of key flags for this module."""
+    return NamesOfDefinedFlags() + DECLARED_KEY_FLAGS
 
 
 def NamesOfDeclaredExtraKeyFlags():
-  """Returns the list of names of additional key flags for this module.
+    """Returns the list of names of additional key flags for this module.
 
-  These are the flags that became key for this module only as a result
-  of a call to DeclareExtraKeyFlags() above.  I.e., the flags declared
-  by module_bar, that were not already declared as key for this
-  module.
+    These are the flags that became key for this module only as a result
+    of a call to DeclareExtraKeyFlags() above.  I.e., the flags declared
+    by module_bar, that were not already declared as key for this
+    module.
 
-  Returns:
-    The list of names of additional key flags for this module.
-  """
-  names_of_extra_key_flags = list(module_bar.NamesOfDefinedFlags())
-  for flag_name in NamesOfDeclaredKeyFlags():
-    while flag_name in names_of_extra_key_flags:
-      names_of_extra_key_flags.remove(flag_name)
-  return names_of_extra_key_flags
+    Returns:
+      The list of names of additional key flags for this module.
+    """
+    names_of_extra_key_flags = list(module_bar.NamesOfDefinedFlags())
+    for flag_name in NamesOfDeclaredKeyFlags():
+        while flag_name in names_of_extra_key_flags:
+            names_of_extra_key_flags.remove(flag_name)
+    return names_of_extra_key_flags
 
 
 def RemoveFlags(flag_values=FLAGS):
-  """Deletes the flag definitions done by the above DefineFlags()."""
-  for flag_name in NamesOfDefinedFlags():
-    module_bar.RemoveOneFlag(flag_name, flag_values=flag_values)
-  module_bar.RemoveFlags(flag_values=flag_values)
+    """Deletes the flag definitions done by the above DefineFlags()."""
+    for flag_name in NamesOfDefinedFlags():
+        module_bar.RemoveOneFlag(flag_name, flag_values=flag_values)
+    module_bar.RemoveFlags(flag_values=flag_values)
 
 
 def GetModuleName():
-  """Uses gflags._GetCallingModule() to return the name of this module.
+    """Uses gflags._GetCallingModule() to return the name of this module.
 
-  For checking that _GetCallingModule works as expected.
+    For checking that _GetCallingModule works as expected.
 
-  Returns:
-    A string, the name of this module.
-  """
-  # Calling the protected _GetCallingModule generates a lint warning,
-  # but we do not have any other alternative to test that function.
-  return gflags._GetCallingModule()  # pylint: disable=protected-access
+    Returns:
+      A string, the name of this module.
+    """
+    # Calling the protected _GetCallingModule generates a lint warning,
+    # but we do not have any other alternative to test that function.
+    return gflags._GetCallingModule()  # pylint: disable=protected-access
 
 
 def DuplicateFlags(flagnames=None):
-  """Returns a new FlagValues object with the requested flagnames.
+    """Returns a new FlagValues object with the requested flagnames.
 
-  Used to test DuplicateFlagError detection.
+    Used to test DuplicateFlagError detection.
 
-  Args:
-    flagnames: str, A list of flag names to create.
+    Args:
+      flagnames: str, A list of flag names to create.
 
-  Returns:
-    A FlagValues object with one boolean flag for each name in flagnames.
-  """
-  flag_values = gflags.FlagValues()
-  for name in flagnames:
-    gflags.DEFINE_boolean(name, False, 'Flag named %s' % (name,),
-                         flag_values=flag_values)
-  return flag_values
+    Returns:
+      A FlagValues object with one boolean flag for each name in flagnames.
+    """
+    flag_values = gflags.FlagValues()
+    for name in flagnames:
+        gflags.DEFINE_boolean(name, False, 'Flag named %s' % (name,),
+                              flag_values=flag_values)
+    return flag_values
 
 
 def DefineBarFlags(flag_values=FLAGS):
-  """Defines flags from module_bar."""
-  module_bar.DefineFlags(flag_values)
+    """Defines flags from module_bar."""
+    module_bar.DefineFlags(flag_values)
